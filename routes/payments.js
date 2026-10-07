@@ -1,1 +1,57 @@
-Y29uc3QgZXhwcmVzcyA9IHJlcXVpcmUoImV4cHJlc3MiKTsNCmNvbnN0IHJvdXRlciA9IGV4cHJlc3MuUm91dGVyKCk7DQoNCmNvbnN0IFBBQ0tTID0gew0KICBwYWNrMTogeyBwcmljZTogIjEuMDAiLCBnYW1lczogMSwgbGFiZWw6ICIxIFBhcnRpZGEiIH0sDQogIHBhY2szOiB7IHByaWNlOiAiMi41MCIsIGdhbWVzOiAzLCBsYWJlbDogIlBhY2sgMyBQYXJ0aWRhcyIgfSwNCiAgcGFjazEwOiB7IHByaWNlOiAiNy4wMCIsIGdhbWVzOiAxMCwgbGFiZWw6ICJQYWNrIDEwIFBhcnRpZGFzIiB9LA0KfTsNCg0Kcm91dGVyLnBvc3QoIi9jcmVhdGUtb3JkZXIiLCBhc3luYyAocmVxLCByZXMpID0+IHsNCiAgdHJ5IHsNCiAgICBjb25zdCB7IHBhY2tJZCwgdXNlcklkIH0gPSByZXEuYm9keTsNCiAgICBjb25zdCBwYWNrID0gUEFDS1NbcGFja0lkXSB8fCBQQUNLUy5wYWNrMzsNCg0KICAgIGNvbnN0IG9yZGVySWQgPSAiT1JERVItIiArIERhdGUubm93KCkgKyAiLSIgKyBNYXRoLnJhbmRvbSgpLnRvU3RyaW5nKDM2KS5zdWJzdHIoMiwgOSk7DQoNCiAgICByZXMuanNvbih7DQogICAgICBvcmRlcklkLA0KICAgICAgcGFjazogcGFjay5sYWJlbCwNCiAgICAgIHByaWNlOiBwYWNrLnByaWNlLA0KICAgICAgZ2FtZXM6IHBhY2suZ2FtZXMsDQogICAgfSk7DQogIH0gY2F0Y2ggKGVycikgew0KICAgIGNvbnNvbGUuZXJyb3IoIkNyZWF0ZS1vcmRlciBlcnJvcjoiLCBlcnIpOw0KICAgIHJlcy5zdGF0dXMoNTAwKS5qc29uKHsgZXJyb3I6ICJGYWlsZWQgdG8gY3JlYXRlIG9yZGVyIiB9KTsNCiAgfQ0KfSk7DQoNCnJvdXRlci5wb3N0KCIvY29uZmlybS1wYXltZW50IiwgYXN5bmMgKHJlcSwgcmVzKSA9PiB7DQogIHRyeSB7DQogICAgY29uc3QgeyBvcmRlcklkLCBhbW91bnRQYWlkLCBnYW1lc1RvQWRkLCB1c2VySWQgfSA9IHJlcS5ib2R5Ow0KDQogICAgY29uc29sZS5sb2coYFBheW1lbnQgY29uZmlybWVkOiBvcmRlcj0ke29yZGVySWR9LCBhbW91bnQ9JHthbW91bnRQYWlkfSwgZ2FtZXM9JHtnYW1lc1RvQWRkfSwgdXNlcj0ke3VzZXJJZH1gKTsNCg0KICAgIGlmICh1c2VySWQpIHsNCiAgICAgIGNvbnN0IHNiID0gcmVxdWlyZSgiLi4vc2VydmljZXMvc3VwYWJhc2UiKS5nZXRTdXBhYmFzZSgpOw0KICAgICAgY29uc3QgeyBkYXRhOiBwcm9maWxlIH0gPSBhd2FpdCBzYg0KICAgICAgICAuZnJvbSgicHJvZmlsZXMiKQ0KICAgICAgICAuc2VsZWN0KCJnYW1lc19hdmFpbGFibGUiKQ0KICAgICAgICAuZXEoImlkIiwgdXNlcklkKQ0KICAgICAgICAuc2luZ2xlKCk7DQoNCiAgICAgIGNvbnN0IGN1cnJlbnRHYW1lcyA9IHByb2ZpbGUgPyBwcm9maWxlLmdhbWVzX2F2YWlsYWJsZSA6IDA7DQogICAgICBhd2FpdCBzYg0KICAgICAgICAuZnJvbSgicHJvZmlsZXMiKQ0KICAgICAgICAudXBkYXRlKHsgZ2FtZXNfYXZhaWxhYmxlOiBjdXJyZW50R2FtZXMgKyBnYW1lc1RvQWRkIH0pDQogICAgICAgIC5lcSgiaWQiLCB1c2VySWQpOw0KICAgIH0NCg0KICAgIHJlcy5qc29uKHsgc3VjY2VzczogdHJ1ZSB9KTsNCiAgfSBjYXRjaCAoZXJyKSB7DQogICAgY29uc29sZS5lcnJvcigiQ29uZmlybS1wYXltZW50IGVycm9yOiIsIGVycik7DQogICAgcmVzLnN0YXR1cyg1MDApLmpzb24oeyBlcnJvcjogIkZhaWxlZCB0byBjb25maXJtIHBheW1lbnQiIH0pOw0KICB9DQp9KTsNCg0KbW9kdWxlLmV4cG9ydHMgPSByb3V0ZXI7DQo=
+const express = require("express");
+const router = express.Router();
+
+const PACKS = {
+  pack1: { price: "1.00", games: 1, label: "1 Partida" },
+  pack3: { price: "2.50", games: 3, label: "Pack 3 Partidas" },
+  pack10: { price: "7.00", games: 10, label: "Pack 10 Partidas" },
+};
+
+router.post("/create-order", async (req, res) => {
+  try {
+    const { packId, userId } = req.body;
+    const pack = PACKS[packId] || PACKS.pack3;
+
+    const orderId = "ORDER-" + Date.now() + "-" + Math.random().toString(36).substr(2, 9);
+
+    res.json({
+      orderId,
+      pack: pack.label,
+      price: pack.price,
+      games: pack.games,
+    });
+  } catch (err) {
+    console.error("Create-order error:", err);
+    res.status(500).json({ error: "Failed to create order" });
+  }
+});
+
+router.post("/confirm-payment", async (req, res) => {
+  try {
+    const { orderId, amountPaid, gamesToAdd, userId } = req.body;
+
+    console.log(`Payment confirmed: order=${orderId}, amount=${amountPaid}, games=${gamesToAdd}, user=${userId}`);
+
+    if (userId) {
+      const sb = require("../services/supabase").getSupabase();
+      const { data: profile } = await sb
+        .from("profiles")
+        .select("games_available")
+        .eq("id", userId)
+        .single();
+
+      const currentGames = profile ? profile.games_available : 0;
+      await sb
+        .from("profiles")
+        .update({ games_available: currentGames + gamesToAdd })
+        .eq("id", userId);
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Confirm-payment error:", err);
+    res.status(500).json({ error: "Failed to confirm payment" });
+  }
+});
+
+module.exports = router;

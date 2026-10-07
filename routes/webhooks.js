@@ -1,1 +1,47 @@
-Y29uc3QgZXhwcmVzcyA9IHJlcXVpcmUoImV4cHJlc3MiKTsNCmNvbnN0IHJvdXRlciA9IGV4cHJlc3MuUm91dGVyKCk7DQpjb25zdCB7IGdldFN1cGFiYXNlIH0gPSByZXF1aXJlKCIuLi9zZXJ2aWNlcy9zdXBhYmFzZSIpOw0KDQpyb3V0ZXIucG9zdCgiL3BheXBhbCIsIGFzeW5jIChyZXEsIHJlcykgPT4gew0KICB0cnkgew0KICAgIGNvbnN0IGV2ZW50ID0gcmVxLmJvZHk7DQoNCiAgICBpZiAoZXZlbnQuZXZlbnRfdHlwZSAhPT0gIlBBWU1FTlQuQ0FQVFVSRS5DT01QTEVURUQiKSB7DQogICAgICByZXR1cm4gcmVzLnN0YXR1cygyMDApLnNlbmQoIklnbm9yZWQiKTsNCiAgICB9DQoNCiAgICBjb25zdCByZXNvdXJjZSA9IGV2ZW50LnJlc291cmNlOw0KICAgIGNvbnN0IGN1c3RvbUlkID0gcmVzb3VyY2UuY3VzdG9tX2lkOw0KDQogICAgaWYgKCFjdXN0b21JZCkgcmV0dXJuIHJlcy5zdGF0dXMoMjAwKS5zZW5kKCJObyBjdXN0b21faWQiKTsNCg0KICAgIGNvbnN0IG1ldGFkYXRhID0gSlNPTi5wYXJzZShjdXN0b21JZCk7DQogICAgY29uc3QgZ2FtZXMgPSBtZXRhZGF0YS5nYW1lcyB8fCAzOw0KICAgIGNvbnN0IHVzZXJJZCA9IG1ldGFkYXRhLnVzZXJJZDsNCg0KICAgIGlmICghdXNlcklkKSByZXR1cm4gcmVzLnN0YXR1cygyMDApLnNlbmQoIk5vIHVzZXJJZCBpbiBtZXRhZGF0YSIpOw0KDQogICAgY29uc3Qgc2IgPSBnZXRTdXBhYmFzZSgpOw0KDQogICAgY29uc3QgeyBkYXRhOiBwcm9maWxlIH0gPSBhd2FpdCBzYg0KICAgICAgLmZyb20oInByb2ZpbGVzIikNCiAgICAgIC5zZWxlY3QoImdhbWVzX2F2YWlsYWJsZSIpDQogICAgICAuZXEoImlkIiwgdXNlcklkKQ0KICAgICAgLnNpbmdsZSgpOw0KDQogICAgY29uc3QgY3VycmVudEdhbWVzID0gcHJvZmlsZSA/IHByb2ZpbGUuZ2FtZXNfYXZhaWxhYmxlIDogMDsNCg0KICAgIGF3YWl0IHNiDQogICAgICAuZnJvbSgicHJvZmlsZXMiKQ0KICAgICAgLnVwZGF0ZSh7IGdhbWVzX2F2YWlsYWJsZTogY3VycmVudEdhbWVzICsgZ2FtZXMgfSkNCiAgICAgIC5lcSgiaWQiLCB1c2VySWQpOw0KDQogICAgY29uc29sZS5sb2coYENyZWRpdGVkICR7Z2FtZXN9IGdhbWVzIHRvIHVzZXIgJHt1c2VySWR9YCk7DQogICAgcmVzLnN0YXR1cygyMDApLnNlbmQoIk9LIik7DQogIH0gY2F0Y2ggKGVycikgew0KICAgIGNvbnNvbGUuZXJyb3IoIldlYmhvb2sgZXJyb3I6IiwgZXJyKTsNCiAgICByZXMuc3RhdHVzKDUwMCkuc2VuZCgiRXJyb3IiKTsNCiAgfQ0KfSk7DQoNCm1vZHVsZS5leHBvcnRzID0gcm91dGVyOw0K
+const express = require("express");
+const router = express.Router();
+const { getSupabase } = require("../services/supabase");
+
+router.post("/paypal", async (req, res) => {
+  try {
+    const event = req.body;
+
+    if (event.event_type !== "PAYMENT.CAPTURE.COMPLETED") {
+      return res.status(200).send("Ignored");
+    }
+
+    const resource = event.resource;
+    const customId = resource.custom_id;
+
+    if (!customId) return res.status(200).send("No custom_id");
+
+    const metadata = JSON.parse(customId);
+    const games = metadata.games || 3;
+    const userId = metadata.userId;
+
+    if (!userId) return res.status(200).send("No userId in metadata");
+
+    const sb = getSupabase();
+
+    const { data: profile } = await sb
+      .from("profiles")
+      .select("games_available")
+      .eq("id", userId)
+      .single();
+
+    const currentGames = profile ? profile.games_available : 0;
+
+    await sb
+      .from("profiles")
+      .update({ games_available: currentGames + games })
+      .eq("id", userId);
+
+    console.log(`Credited ${games} games to user ${userId}`);
+    res.status(200).send("OK");
+  } catch (err) {
+    console.error("Webhook error:", err);
+    res.status(500).send("Error");
+  }
+});
+
+module.exports = router;

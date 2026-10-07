@@ -1,1 +1,34 @@
-cmVxdWlyZSgiZG90ZW52IikuY29uZmlnKCk7DQpjb25zdCBleHByZXNzID0gcmVxdWlyZSgiZXhwcmVzcyIpOw0KY29uc3QgY29ycyA9IHJlcXVpcmUoImNvcnMiKTsNCmNvbnN0IHBhdGggPSByZXF1aXJlKCJwYXRoIik7DQoNCmNvbnN0IHF1ZXN0aW9uc1JvdXRlciA9IHJlcXVpcmUoIi4vcm91dGVzL3F1ZXN0aW9ucyIpOw0KY29uc3QgcGF5bWVudHNSb3V0ZXIgPSByZXF1aXJlKCIuL3JvdXRlcy9wYXltZW50cyIpOw0KY29uc3Qgd2ViaG9va3NSb3V0ZXIgPSByZXF1aXJlKCIuL3JvdXRlcy93ZWJob29rcyIpOw0KDQpjb25zdCBhcHAgPSBleHByZXNzKCk7DQpjb25zdCBQT1JUID0gcHJvY2Vzcy5lbnYuUE9SVCB8fCAzMDAwOw0KDQphcHAudXNlKGNvcnMoeyBvcmlnaW46IHByb2Nlc3MuZW52LkZST05URU5EX09SSUdJTiB8fCAiKiIgfSkpOw0KYXBwLnVzZShleHByZXNzLmpzb24oKSk7DQoNCmFwcC51c2UoZXhwcmVzcy5zdGF0aWMocGF0aC5qb2luKF9fZGlybmFtZSwgInB1YmxpYyIpKSk7DQoNCmFwcC51c2UoIi9hcGkvcXVlc3Rpb25zIiwgcXVlc3Rpb25zUm91dGVyKTsNCmFwcC51c2UoIi9hcGkvcGF5bWVudHMiLCBwYXltZW50c1JvdXRlcik7DQphcHAudXNlKCIvd2ViaG9va3MiLCB3ZWJob29rc1JvdXRlcik7DQoNCmFwcC5nZXQoIi9oZWFsdGgiLCAocmVxLCByZXMpID0+IHJlcy5qc29uKHsgc3RhdHVzOiAib2siLCB0aW1lc3RhbXA6IG5ldyBEYXRlKCkudG9JU09TdHJpbmcoKSB9KSk7DQoNCmFwcC5nZXQoIioiLCAocmVxLCByZXMpID0+IHsNCiAgcmVzLnNlbmRGaWxlKHBhdGguam9pbihfX2Rpcm5hbWUsICJwdWJsaWMiLCAiaW5kZXguaHRtbCIpKTsNCn0pOw0KDQppZiAocHJvY2Vzcy5lbnYuVkVSQ0VMICE9PSAiMSIpIHsNCiAgYXBwLmxpc3RlbihQT1JULCAoKSA9PiB7DQogICAgY29uc29sZS5sb2coYFBhcnR5IFJvdWxldHRlIEFQSSBydW5uaW5nIG9uIGh0dHA6Ly9sb2NhbGhvc3Q6JHtQT1JUfWApOw0KICB9KTsNCn0NCg0KbW9kdWxlLmV4cG9ydHMgPSBhcHA7DQo=
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const path = require("path");
+
+const questionsRouter = require("./routes/questions");
+const paymentsRouter = require("./routes/payments");
+const webhooksRouter = require("./routes/webhooks");
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(cors({ origin: process.env.FRONTEND_ORIGIN || "*" }));
+app.use(express.json());
+
+app.use(express.static(path.join(__dirname, "public")));
+
+app.use("/api/questions", questionsRouter);
+app.use("/api/payments", paymentsRouter);
+app.use("/webhooks", webhooksRouter);
+
+app.get("/health", (req, res) => res.json({ status: "ok", timestamp: new Date().toISOString() }));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+if (process.env.VERCEL !== "1") {
+  app.listen(PORT, () => {
+    console.log(`Party Roulette API running on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;

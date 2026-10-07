@@ -1,1 +1,19 @@
-Y29uc3QgeyBjcmVhdGVDbGllbnQgfSA9IHJlcXVpcmUoIkBzdXBhYmFzZS9zdXBhYmFzZS1qcyIpOw0KDQpjb25zdCBzdXBhYmFzZVVybCA9IHByb2Nlc3MuZW52LlNVUEFCQVNFX1VSTDsNCmNvbnN0IHN1cGFiYXNlS2V5ID0gcHJvY2Vzcy5lbnYuU1VQQUJBU0VfU0VSVklDRV9ST0xFX0tFWTsNCg0KaWYgKCFzdXBhYmFzZVVybCB8fCAhc3VwYWJhc2VLZXkpIHsNCiAgY29uc29sZS53YXJuKCJTVVBBQkFTRV9VUkwgb3IgU1VQQUJBU0VfU0VSVklDRV9ST0xFX0tFWSBub3Qgc2V0LiBTdXBhYmFzZSBjbGllbnQgbm90IGluaXRpYWxpemVkLiIpOw0KfQ0KDQpjb25zdCBzdXBhYmFzZSA9IHN1cGFiYXNlVXJsICYmIHN1cGFiYXNlS2V5DQogID8gY3JlYXRlQ2xpZW50KHN1cGFiYXNlVXJsLCBzdXBhYmFzZUtleSkNCiAgOiBudWxsOw0KDQpmdW5jdGlvbiBnZXRTdXBhYmFzZSgpIHsNCiAgaWYgKCFzdXBhYmFzZSkgdGhyb3cgbmV3IEVycm9yKCJTdXBhYmFzZSBjbGllbnQgbm90IGluaXRpYWxpemVkIik7DQogIHJldHVybiBzdXBhYmFzZTsNCn0NCg0KbW9kdWxlLmV4cG9ydHMgPSB7IGdldFN1cGFiYXNlIH07DQo=
+const { createClient } = require("@supabase/supabase-js");
+
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  console.warn("SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY not set. Supabase client not initialized.");
+}
+
+const supabase = supabaseUrl && supabaseKey
+  ? createClient(supabaseUrl, supabaseKey)
+  : null;
+
+function getSupabase() {
+  if (!supabase) throw new Error("Supabase client not initialized");
+  return supabase;
+}
+
+module.exports = { getSupabase };

@@ -1,1 +1,42 @@
-Y29uc3QgZXhwcmVzcyA9IHJlcXVpcmUoImV4cHJlc3MiKTsNCmNvbnN0IHJvdXRlciA9IGV4cHJlc3MuUm91dGVyKCk7DQpjb25zdCB7IGdldFN1cGFiYXNlIH0gPSByZXF1aXJlKCIuLi9zZXJ2aWNlcy9zdXBhYmFzZSIpOw0KDQpyb3V0ZXIuZ2V0KCIvOmNhdGVnb3J5IiwgYXN5bmMgKHJlcSwgcmVzKSA9PiB7DQogIHRyeSB7DQogICAgY29uc3Qgc2IgPSBnZXRTdXBhYmFzZSgpOw0KICAgIGNvbnN0IHsgY2F0ZWdvcnkgfSA9IHJlcS5wYXJhbXM7DQogICAgY29uc3QgbGltaXQgPSBwYXJzZUludChyZXEucXVlcnkubGltaXQpIHx8IDIwOw0KDQogICAgY29uc3QgeyBkYXRhLCBlcnJvciB9ID0gYXdhaXQgc2INCiAgICAgIC5mcm9tKCJxdWVzdGlvbnMiKQ0KICAgICAgLnNlbGVjdCgiKiIpDQogICAgICAuZXEoImNhdGVnb3J5IiwgY2F0ZWdvcnkpDQogICAgICAubGltaXQobGltaXQpOw0KDQogICAgaWYgKGVycm9yKSB0aHJvdyBuZXcgRXJyb3IoZXJyb3IubWVzc2FnZSk7DQogICAgcmVzLmpzb24oZGF0YSk7DQogIH0gY2F0Y2ggKGVycikgew0KICAgIHJlcy5zdGF0dXMoNTAwKS5qc29uKHsgZXJyb3I6IGVyci5tZXNzYWdlIH0pOw0KICB9DQp9KTsNCg0Kcm91dGVyLnBvc3QoIi8iLCBhc3luYyAocmVxLCByZXMpID0+IHsNCiAgdHJ5IHsNCiAgICBjb25zdCBzYiA9IGdldFN1cGFiYXNlKCk7DQogICAgY29uc3Qgcm93cyA9IHJlcS5ib2R5Ow0KDQogICAgaWYgKCFBcnJheS5pc0FycmF5KHJvd3MpIHx8IHJvd3MubGVuZ3RoID09PSAwKSB7DQogICAgICByZXR1cm4gcmVzLnN0YXR1cyg0MDApLmpzb24oeyBlcnJvcjogIkJvZHkgbXVzdCBiZSBhIG5vbi1lbXB0eSBhcnJheSIgfSk7DQogICAgfQ0KDQogICAgY29uc3QgeyBkYXRhLCBlcnJvciB9ID0gYXdhaXQgc2IuZnJvbSgicXVlc3Rpb25zIikuaW5zZXJ0KHJvd3MpLnNlbGVjdCgpOw0KDQogICAgaWYgKGVycm9yKSB0aHJvdyBuZXcgRXJyb3IoZXJyb3IubWVzc2FnZSk7DQogICAgcmVzLmpzb24oeyBpbnNlcnRlZDogZGF0YS5sZW5ndGgsIGRhdGEgfSk7DQogIH0gY2F0Y2ggKGVycikgew0KICAgIHJlcy5zdGF0dXMoNTAwKS5qc29uKHsgZXJyb3I6IGVyci5tZXNzYWdlIH0pOw0KICB9DQp9KTsNCg0KbW9kdWxlLmV4cG9ydHMgPSByb3V0ZXI7DQo=
+const express = require("express");
+const router = express.Router();
+const { getSupabase } = require("../services/supabase");
+
+router.get("/:category", async (req, res) => {
+  try {
+    const sb = getSupabase();
+    const { category } = req.params;
+    const limit = parseInt(req.query.limit) || 20;
+
+    const { data, error } = await sb
+      .from("questions")
+      .select("*")
+      .eq("category", category)
+      .limit(limit);
+
+    if (error) throw new Error(error.message);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post("/", async (req, res) => {
+  try {
+    const sb = getSupabase();
+    const rows = req.body;
+
+    if (!Array.isArray(rows) || rows.length === 0) {
+      return res.status(400).json({ error: "Body must be a non-empty array" });
+    }
+
+    const { data, error } = await sb.from("questions").insert(rows).select();
+
+    if (error) throw new Error(error.message);
+    res.json({ inserted: data.length, data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+module.exports = router;
